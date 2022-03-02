@@ -3,7 +3,7 @@ version: "3.5"
 services:
   traefik:
     image: traefik:v2.3
-    container_name: "traefik"
+    container_name: "misskey-traefik"
     restart: always
     command:
       #      - "--log.level=DEBUG"
@@ -45,6 +45,7 @@ services:
 
   web:
     image: akarregi/misskey
+    container_name: "misskey-fe"
     restart: always
     links:
       - db
@@ -68,22 +69,24 @@ services:
       - external_network
 
   redis:
-    restart: always
     image: redis:4.0-alpine
-    networks:
-      - internal_network
+    container_name: "misskey-redis"
+    restart: always
     volumes:
       - ./redis:/data
-
-  db:
-    restart: always
-    image: postgres:12.2-alpine
     networks:
       - internal_network
+
+  db:
+    image: postgres:12.2-alpine
+    container_name: "misskey-postgres"
+    restart: always
     env_file:
       - configuration/docker.env
     volumes:
       - ./db:/var/lib/postgresql/data
+    networks:
+      - internal_network
 
   # nginx:
   #   restart: always
