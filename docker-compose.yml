@@ -44,7 +44,7 @@ services:
       - external_network
 
   web:
-    image: akarregi/misskey
+    image: akarregi/misskey:12.107.0
     container_name: "misskey-fe"
     restart: always
     links:
