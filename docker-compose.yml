@@ -64,7 +64,7 @@ services:
       - ./configuration:/misskey/.config:ro
     networks:
       - internal_network
-  #   - external_network
+      - external_network
 
   redis:
     restart: always
