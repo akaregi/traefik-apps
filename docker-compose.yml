@@ -40,7 +40,7 @@ services:
       - external_network
 
   web:
-    image: misskey/misskey:12.107.0
+    image: akarregi/misskey
     restart: always
     links:
       - db
