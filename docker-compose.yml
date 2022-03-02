@@ -88,11 +88,6 @@ services:
   nginx:
     restart: always
     image: nginx:latest
-    command: >
-      /bin/sh -c 
-      "envsubst '$$DOMAIN_MEDIA$$S3_REGION$$S3_NAMESPACE$$S3_BUCKET'
-      < /etc/nginx/conf.d/nginx.conf > /etc/nginx/conf.d/default.conf
-      && nginx -g 'daemon off;'"
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=misskey_external_network"
