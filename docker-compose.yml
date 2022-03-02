@@ -95,6 +95,8 @@ services:
       - "traefik.http.routers.misskey-media.rule=Host(`${DOMAIN_MEDIA}`)"
       - "traefik.http.routers.misskey-media.entrypoints=websecure"
       - "traefik.http.routers.misskey-media.tls.certresolver=letsencrypt"
+    depends_on:
+      - traefik
     environment:
       - DOMAIN_MEDIA=${DOMAIN_MEDIA}
     volumes:
