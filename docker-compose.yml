@@ -47,8 +47,9 @@ services:
       - redis
     depends_on:
       - traefik
-      - db
       - redis
+      db:
+        condition: service_healthy
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=misskey_external_network"
