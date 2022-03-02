@@ -1,0 +1,88 @@
+version: "3.5"
+
+services:
+  traefik:
+    image: traefik:v2.3
+    container_name: "traefik"
+    restart: always
+    command:
+      #      - "--log.level=DEBUG"
+      - "--api.dashboard=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.email=${EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    labels:
+      - "traefik.enable=true"
+      # Dashboard
+      - "traefik.http.routers.traefik.rule=(Host(`${DOMAIN}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`)))"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.middlewares=dashboardauth"
+      - "traefik.http.middlewares.dashboardauth.basicauth.users=admin:${TRAEFIK_DASHBOARD_ADMIN_PASSWORD}"
+      # HTTPS Redirect
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./letsencrypt:/letsencrypt
+    networks:
+      - external_network
+
+  web:
+    image: misskey/misskey:12.107.0
+    restart: always
+    links:
+      - db
+      - redis
+    depends_on:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=misskey_external_network"
+      - "traefik.http.services.misskey-web.loadbalancer.server.port=3000"
+      - "traefik.http.routers.misskey-web.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.misskey-web.entrypoints=websecure"
+      - "traefik.http.routers.misskey-web.tls.certresolver=letsencrypt"
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./files:/misskey/files
+      - ./.config:/misskey/.config:ro
+    networks:
+      - external_network
+      - internal_network
+
+  redis:
+    restart: always
+    image: redis:4.0-alpine
+    networks:
+      - internal_network
+    volumes:
+      - ./redis:/data
+
+  db:
+    restart: always
+    image: postgres:12.2-alpine
+    networks:
+      - internal_network
+    env_file:
+      - .config/docker.env
+    volumes:
+      - ./db:/var/lib/postgresql/data
+
+networks:
+  external_network:
+    name: misskey_external_network
+  internal_network:
+    internal: true
