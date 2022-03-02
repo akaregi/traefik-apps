@@ -16,6 +16,7 @@ services:
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare"
       - "--certificatesresolvers.letsencrypt.acme.email=${EMAIL}"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.keyType=EC256"
     ports:
       - "80:80"
       - "443:443"
@@ -83,6 +84,24 @@ services:
       - configuration/docker.env
     volumes:
       - ./db:/var/lib/postgresql/data
+
+  nginx:
+    restart: always
+    image: nginx:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=misskey_external_network"
+      - "traefik.http.services.misskey-media.loadbalancer.server.port=4000"
+      - "traefik.http.routers.misskey-media.rule=Host(`${DOMAIN_MEDIA}`)"
+      - "traefik.http.routers.misskey-media.entrypoints=websecure"
+      - "traefik.http.routers.misskey-media.tls.certresolver=letsencrypt"
+    environment:
+      - DOMAIN_MEDIA=${DOMAIN_MEDIA}
+    volumes:
+      - ./configurations/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - internal_network
+      - external_network
 
 networks:
   external_network:
