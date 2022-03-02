@@ -80,6 +80,9 @@ services:
       - internal_network
     env_file:
       - configuration/docker.env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      start_period: "10s"
     volumes:
       - ./db:/var/lib/postgresql/data
 
