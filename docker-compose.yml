@@ -85,9 +85,10 @@ services:
       - configuration/docker.env
     healthcheck:
       test: ["CMD", "pg_isready"]
-      start_period: "10s"
     volumes:
       - ./db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
 networks:
   external_network:
