@@ -101,7 +101,7 @@ services:
     environment:
       - DOMAIN_MEDIA=${DOMAIN_MEDIA}
     volumes:
-      - ./configuration/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./configuration/nginx.conf:/etc/nginx/conf.d/nginx.conf
     networks:
       - internal_network
       - external_network
