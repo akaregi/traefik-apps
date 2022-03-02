@@ -56,8 +56,6 @@ services:
       - "traefik.http.routers.misskey-web.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.misskey-web.entrypoints=websecure"
       - "traefik.http.routers.misskey-web.tls.certresolver=letsencrypt"
-    ports:
-      - "127.0.0.1:3000:3000"
     volumes:
       - ./files:/misskey/files
       - ./configuration:/misskey/.config:ro
