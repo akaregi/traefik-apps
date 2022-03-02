@@ -46,12 +46,9 @@ services:
       - db
       - redis
     depends_on:
-      db:
-        condition: service_healthy
-      traefik:
-        condition: service_started
-      redis:
-        condition: service_started
+      - traefik
+      - db
+      - redis
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=misskey_external_network"
@@ -83,12 +80,8 @@ services:
       - internal_network
     env_file:
       - configuration/docker.env
-    healthcheck:
-      test: ["CMD", "pg_isready"]
     volumes:
       - ./db:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
 
 networks:
   external_network:
