@@ -3,7 +3,7 @@ version: "3.5"
 services:
   traefik:
     image: traefik:v2.3
-    container_name: "misskey-traefik"
+    container_name: "traefik-apps"
     restart: always
     command:
       - "--api.dashboard=true"
@@ -44,7 +44,7 @@ services:
 
   web:
     image: akarregi/misskey:12.111.1
-    container_name: "misskey-fe"
+    container_name: "misskey"
     restart: always
     links:
       - db
@@ -69,7 +69,7 @@ services:
 
   redis:
     image: redis:4.0-alpine
-    container_name: "misskey-redis"
+    container_name: "redis"
     restart: always
     volumes:
       - ./redis:/data
@@ -78,7 +78,7 @@ services:
 
   db:
     image: postgres:12.2-alpine
-    container_name: "misskey-postgres"
+    container_name: "postgres"
     restart: always
     env_file:
       - config/database.env
