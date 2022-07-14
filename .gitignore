@@ -1,6 +1,6 @@
-/.configuration/**
-!/.configuration/example.yml
-!/.configuration/docker_example.env
+/.config/**
+!/.config/database.example.env
+!/.config/misskey/example.yml
 
 .env
 /db
