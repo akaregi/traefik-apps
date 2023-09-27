@@ -1,3 +1,7 @@
+## NOTICE
+
+**THIS REPO HAS BEEN MOVED AND INTEGRATED TO `akarregi/web-services` !**
+
 ## How to use
 
 ```bash
