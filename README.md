@@ -1,6 +1,6 @@
 ## NOTICE
 
-**THIS REPO HAS BEEN MOVED AND INTEGRATED TO `akarregi/web-services` !**
+**THIS REPO HAS BEEN MOVED AND INTEGRATED TO `akaregi/web-services` !**
 
 ## How to use
 
